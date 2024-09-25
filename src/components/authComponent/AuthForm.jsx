@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser, registerUser } from "../../../redux/authSlice.js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import loginImage from '../../assets/budgetLogin.avif'
 // Validation schema for both login and registration
 const validationSchema = (isRegister) => Yup.object({
   userName: isRegister
@@ -62,9 +62,8 @@ const AuthForm = () => {
       actions.setSubmitting(false);
     }
   };
-  
-
   return (
+    <div className="mainDiv">
     <div className="auth-form-container">
       <h2>{isRegister ? 'Register' : 'Login'}</h2>
       <Formik
@@ -141,6 +140,10 @@ const AuthForm = () => {
           </>
         )}
       </Formik>
+    </div>
+    <div className="loginImageSection">
+        <img alt='login image' src={loginImage}/>
+    </div>
     </div>
   );
 };

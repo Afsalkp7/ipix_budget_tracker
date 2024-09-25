@@ -1,8 +1,9 @@
 import React from 'react'
+import { ExpenceOverView } from './ExpenceOverView'
 
 function Home() {
   return (
-    <div>Home</div>
+    <ExpenceOverView />
   )
 }
 

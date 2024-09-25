@@ -1,44 +1,68 @@
-.auth-form-container {
-    max-width: 400px;
-    margin: 0 auto;
+.mainDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    gap: 40px; /* Adds space between the form and the image */
+  }
+  
+  .auth-form-container {
+    width: 100%;
+    max-width: 400px;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   
   .auth-form h2 {
     text-align: center;
     margin-bottom: 20px;
+    font-size: 1.8rem;
   }
   
   .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
   
   .form-group .form-control {
     width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-group .form-control:focus {
+    border-color: #85b6eb;
   }
   
   .error-message {
     color: red;
-    font-size: 0.875em;
+    font-size: 0.875rem;
+    margin-top: 5px;
   }
   
   .btn {
     width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
+    padding: 12px;
+    font-size: 1.1rem;
+    background-color: #76a7db;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
   }
   
   .toggle-btn {
@@ -48,8 +72,27 @@
     border: none;
     cursor: pointer;
     text-decoration: underline;
-    display: block;
     width: 100%;
     text-align: center;
+    font-size: 1rem;
+  }
+  
+  .loginImageSection img {
+    width: 400px;
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .mainDiv {
+      flex-direction: column;
+      padding: 20px;
+    }
+    
+    .loginImageSection {
+      display: none; /* Hide the image on smaller screens */
+    }
   }
   

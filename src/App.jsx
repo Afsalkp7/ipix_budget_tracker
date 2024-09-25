@@ -6,6 +6,7 @@ import Layout from "./Layout";
 import PublicRoute from './components/authComponent/privateRoute/PublicRoute';
 import PrivateRoute from './components/authComponent/privateRoute/PrivateRoute';
 import Home from './components/dashboard/Home';
+import Income from './components/income/Income';
 function App() {
 
   return (
@@ -15,6 +16,30 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route
               path="/"
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/planning"
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/income"
+              element={
+                <PrivateRoute>
+                  <Income />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/expense"
               element={
                 <PrivateRoute>
                   <Home />

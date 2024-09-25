@@ -1,0 +1,185 @@
+/* General container styling */
+.income-container {
+    margin: 20px;
+  }
+  
+  /* Add button styling */
+  .income-container button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px; /* Smaller padding */
+    border-radius: 4px;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 110px;
+    font-size: 0.9rem; /* Slightly smaller font */
+  }
+  
+  .income-container button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Table Styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 50px; /* Add margin to give space for the button */
+  }
+  
+  table th, table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-size: 1rem;
+  }
+  
+  table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Make the table responsive */
+  @media (max-width: 768px) {
+    table {
+      display: block;
+      overflow-x: auto; /* Enable side scroll on smaller screens */
+      white-space: nowrap;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    table thead {
+      display: none;
+    }
+  
+    table, table tbody, table tr, table td {
+      display: block;
+      width: 100%;
+    }
+  
+    table tr {
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+  
+    table td {
+      text-align: right;
+      padding-left: 50%;
+      position: relative;
+    }
+  
+    table td::before {
+      content: attr(data-label); /* Display the header label on small screens */
+      position: absolute;
+      left: 0;
+      width: 45%;
+      padding-left: 10px;
+      font-weight: bold;
+      text-align: left;
+    }
+  }
+  
+  /* Modal Styling */
+  .modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  }
+  
+  /* Modal form fields */
+  .modal form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal form div {
+    margin-bottom: 15px;
+  }
+  
+  .modal form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .modal form input {
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px; /* Softer corners */
+    width: 100%;
+  }
+  .modal form textarea{
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px; /* Softer corners */
+    width: 100%;
+  }
+  
+  .modal form button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+  
+  .modal form button:hover {
+    background-color: #45a049;
+  }
+  
+  .modal form button[type="button"] {
+    background-color: #ccc;
+    margin-left: 10px;
+  }
+  
+  .modal form button[type="button"]:hover {
+    background-color: #999;
+  }
+  
+  tr:hover{
+    background: #999 !important;
+    cursor: pointer;
+  }
+
+  .delete-button {
+    position: absolute;
+    top: 25px;
+    right: 20px;
+    border-radius: 5px;
+    background-color: rgba(255, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .delete-button:hover {
+    background-color: rgba(139, 0, 0, 0.76);
+  }
+  

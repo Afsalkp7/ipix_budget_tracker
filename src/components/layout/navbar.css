@@ -72,3 +72,21 @@
         display: none;
     }
 }
+
+.dropdownMenu{
+    font-size: 12px !important;
+    position: absolute;
+    left: 50%;
+    top: 40px;
+    color: black;
+    
+}
+.dropdownMenu ul{
+    display: inline-flex;
+    list-style: none;
+    gap: 10px;
+}
+.dropdownMenu ul li{
+    text-decoration: none;
+    color: black;
+}

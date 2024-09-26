@@ -1,10 +1,10 @@
 /* General container styling */
-.income-container {
+.expense-container {
     margin: 20px;
   }
   
   /* Add button styling */
-  .add-income-button {
+  .add-expense-button {
     background-color: #4faf4c;
     color: white;
     border: none;
@@ -17,7 +17,7 @@
     font-size: 0.9rem; /* Slightly smaller font */
   }
   
-  .add-income-button button:hover {
+  .add-expense-button button:hover {
     background-color: #45a049;
   }
   
@@ -54,7 +54,7 @@
   }
   
   @media (max-width: 420px) {
-    .add-income-button{
+    .add-expense-button{
         top: 240px;
     }
   }

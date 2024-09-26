@@ -7,6 +7,8 @@ import PublicRoute from './components/authComponent/privateRoute/PublicRoute';
 import PrivateRoute from './components/authComponent/privateRoute/PrivateRoute';
 import Home from './components/dashboard/Home';
 import Income from './components/income/Income';
+import Expense from './components/expense/Expense';
+import Planning from './components/planning/Planning';
 function App() {
 
   return (
@@ -26,7 +28,7 @@ function App() {
               path="/planning"
               element={
                 <PrivateRoute>
-                  <Home />
+                  <Planning />
                 </PrivateRoute>
               }
             />
@@ -42,7 +44,7 @@ function App() {
               path="/expense"
               element={
                 <PrivateRoute>
-                  <Home />
+                  <Expense />
                 </PrivateRoute>
               }
             />

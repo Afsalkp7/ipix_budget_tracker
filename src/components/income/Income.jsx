@@ -1,32 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import './income.css'; // Add your CSS file for styling
+import './income.css';
 import API from '../../../utils/api';
 
 function Income() {
-  const [incomes, setIncomes] = useState([]); // State to hold income data
-  const [modalIsOpen, setModalIsOpen] = useState(false); // State to control modal visibility
-  const [isEditing, setIsEditing] = useState(false); // State to track if we are editing an existing income
-  const [selectedIncomeId, setSelectedIncomeId] = useState(null); // State to store the id of the income being edited
+  const [incomes, setIncomes] = useState([]);
+  const [filteredIncomes, setFilteredIncomes] = useState([]);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedIncomeId, setSelectedIncomeId] = useState(null);
   const [formData, setFormData] = useState({
     amount: '',
     category: '',
     date: '',
     description: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    // Fetch incomes from the backend API
     const fetchIncomes = async () => {
+      setLoading(true);
+      setError('');
       try {
         const response = await API.get('/income');
-        setIncomes(response.data.income); // Assuming the response contains the income array
+        setIncomes(response.data.income);
       } catch (error) {
-        console.error('Error fetching incomes:', error);
+        setError('Error fetching incomes. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
     fetchIncomes();
   }, []);
+
+  useEffect(() => {
+    const filtered = incomes.filter((income) => {
+      const incomeDate = new Date(income.date);
+      return incomeDate.getMonth() === currentMonth.getMonth() && incomeDate.getFullYear() === currentMonth.getFullYear();
+    });
+    setFilteredIncomes(filtered);
+  }, [incomes, currentMonth]);
 
   const handleChange = (e) => {
     setFormData({
@@ -37,125 +53,164 @@ function Income() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+    
+    // Validate formData
+    if (formData.amount <= 0) {
+      setError('Amount must be a positive number.');
+      return;
+    }
+
+    setLoading(true);
     try {
       if (isEditing) {
-        // Update existing income
         await API.put(`/income/${selectedIncomeId}`, formData);
-        const updatedIncomes = incomes.map(income => 
-          income._id === selectedIncomeId ? { ...income, ...formData } : income
+        setIncomes((prev) =>
+          prev.map((income) => (income._id === selectedIncomeId ? { ...income, ...formData } : income))
         );
-        setIncomes(updatedIncomes);
       } else {
-        // Add new income
         const response = await API.post('/income', formData);
-        setIncomes([...incomes, response.data.income]); // Add the new income to the existing list
+        setIncomes((prev) => [...prev, response.data.income]);
       }
-      
-      setModalIsOpen(false); // Close the modal
-      setFormData({ amount: '', category: '', date: '', description: '' }); // Reset form data
-      setIsEditing(false); // Reset editing state
+      setSuccessMessage(isEditing ? 'Income updated successfully!' : 'Income added successfully!');
+      closeModal();
     } catch (error) {
-      console.error('Failed to add or update income:', error);
+      setError('Failed to add or update income. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleRowClick = (income) => {
-    // Populate the form with the income data
-    setFormData({
-      amount: income.amount,
-      category: income.category,
-      date: income.date,
-      description: income.description,
-    });
-    setSelectedIncomeId(income._id); // Set the id of the income being edited
-    setIsEditing(true); // Set the editing state to true
-    setModalIsOpen(true); // Open the modal
-  };
-
-  const handleAddIncomeClick = () => {
-    setFormData({ amount: '', category: '', date: '', description: '' }); // Clear the form data for a new entry
-    setIsEditing(false); // Reset editing state
-    setModalIsOpen(true); // Open the modal
   };
 
   const handleDelete = async () => {
-    try {
-      // Call the API to delete the income
-      await API.delete(`/income/${selectedIncomeId}`);
-      // Remove the deleted income from the state
-      const updatedIncomes = incomes.filter(income => income._id !== selectedIncomeId);
-      setIncomes(updatedIncomes);
-      // Close the modal after deletion
-      setModalIsOpen(false);
-      // Reset the form data and editing state
-      setFormData({ amount: '', category: '', date: '', description: '' });
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Failed to delete income:', error);
+    if (selectedIncomeId) {
+      setLoading(true);
+      try {
+        await API.delete(`/income/${selectedIncomeId}`);
+        setIncomes((prev) => prev.filter((income) => income._id !== selectedIncomeId));
+        closeModal();
+        setSuccessMessage('Income deleted successfully!');
+      } catch (error) {
+        setError('Error deleting income. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     }
+  };
+
+  const openAddModal = (income = null) => {
+    if (income) {
+      setIsEditing(true);
+      setSelectedIncomeId(income._id);
+      setFormData({
+        amount: income.amount,
+        category: income.category,
+        date: new Date(income.date).toISOString().split("T")[0],
+        description: income.description,
+      });
+    } else {
+      setIsEditing(false);
+      setSelectedIncomeId(null);
+      setFormData({ amount: '', category: '', date: '', description: '' });
+    }
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setSelectedIncomeId(null);
+    setIsEditing(false);
+    setSuccessMessage('');
+    setError('');
+  };
+
+  const handlePreviousMonth = () => {
+    setCurrentMonth((prev) => {
+      const newDate = new Date(prev); // Clone the previous date
+      newDate.setMonth(prev.getMonth() - 1); // Update the month
+      return newDate;
+    });
+  };
+  
+  const handleNextMonth = () => {
+    setCurrentMonth((prev) => {
+      const newDate = new Date(prev); // Clone the previous date
+      newDate.setMonth(prev.getMonth() + 1); // Update the month
+      return newDate;
+    });
+  };
+  
+
+  const handleCurrentMonth = () => {
+    setCurrentMonth(new Date());
   };
 
   return (
     <div className="income-container">
-      <h1>Incomes</h1>
-      <button onClick={handleAddIncomeClick}>Add Income</button> {/* Button to add new income */}
-  
-      <table>
+      <h1>Income for {currentMonth.toLocaleString("default", { month: "long", year: "numeric" })}</h1>
+      <div className="pagination-buttons">
+        <button onClick={handlePreviousMonth}>Previous Month</button>
+        <button onClick={handleCurrentMonth}>Current Month</button>
+        <button onClick={handleNextMonth}>Next Month</button>
+      </div>
+      <button className="add-income-button" onClick={() => openAddModal()}>Add Income</button>
+      {loading && <p>Loading...</p>}
+      {error && <p className="error">{error}</p>}
+      {successMessage && <p className="success">{successMessage}</p>}
+      <table className="income-table">
         <thead>
           <tr>
             <th>Amount</th>
             <th>Category</th>
-            <th>Date</th>
             <th>Description</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
-          {incomes.map((income, index) => (
-            <tr key={index} onClick={() => handleRowClick(income)}> {/* Clicking a row fills the form with data */}
-              <td data-label="Amount">{income.amount}</td>
-              <td data-label="Category">{income.category}</td>
-              <td data-label="Date">{new Date(income.date).toLocaleDateString()}</td>
-              <td data-label="Description">{income.description}</td>
+          {filteredIncomes.length > 0 ? (
+            filteredIncomes.map((income) => (
+              <tr key={income._id} onClick={() => openAddModal(income)}>
+                <td style={{ color: "green" }}>${income.amount}</td>
+                <td>{income.category}</td>
+                <td>{income.description}</td>
+                <td>{new Date(income.date).toLocaleDateString()}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" style={{ textAlign: "center" }}>No income entries available for this month.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
-  
-      {/* Modal for adding/updating income */}
       <Modal
         isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
-        contentLabel={isEditing ? "Edit Income" : "Add Income"}
+        onRequestClose={closeModal}
+        contentLabel="Add Income Modal"
         className="modal"
         overlayClassName="overlay"
       >
-        <div className="modal-header">
-          <h2>{isEditing ? "Edit Income" : "Add Income"}</h2>
-          {isEditing && (
-            <button className="delete-button" onClick={handleDelete}>
-              Delete
-            </button>
-          )} {/* Show delete button only in edit mode */}
-        </div>
+        <h2>{isEditing ? "Edit Income" : "Add Income"}</h2>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label>Amount:</label>
+          <label>
+            Amount:
             <input type="number" name="amount" value={formData.amount} onChange={handleChange} required />
-          </div>
-          <div>
-            <label>Category:</label>
+          </label>
+          <label>
+            Category:
             <input type="text" name="category" value={formData.category} onChange={handleChange} required />
-          </div>
-          <div>
-            <label>Date:</label>
+          </label>
+          <label>
+            Description:
+            <input type="text" name="description" value={formData.description} onChange={handleChange} required />
+          </label>
+          <label>
+            Date:
             <input type="date" name="date" value={formData.date} onChange={handleChange} required />
-          </div>
-          <div>
-            <label>Description:</label>
-            <textarea name="description" value={formData.description} onChange={handleChange} rows="4" />
-          </div>
+          </label>
           <button type="submit">{isEditing ? "Update" : "Add"}</button>
-          <button type="button" onClick={() => setModalIsOpen(false)}>Cancel</button>
+          {isEditing && <button type="button" onClick={handleDelete}>Delete</button>}
+          <button type="button" onClick={closeModal}>Cancel</button>
         </form>
       </Modal>
     </div>
